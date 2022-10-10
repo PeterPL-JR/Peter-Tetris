@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Tetris Game</title>
+    <style>
+        body {
+            background-color: #121212;
+            text-align: center;
+            margin-top: 50px;
+        }
+        canvas {
+            border: solid black 17px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body onload="init();">
+    <div id="container">
+        <canvas></canvas>
+        <div id="panel">
+            <div id="div-next"></div>
+            <div id="div-score"></div>
+        </div>
+    </div>
+    <script src="graphics.js"></script>
+    <script src="system.js"></script>
+</body>
+</html>
