@@ -20,3 +20,9 @@ function drawCircle(xCenter, yCenter, radius, color) {
     ctx.fill();
     ctx.closePath();
 }
+
+function loadImage(path) {
+    const img = document.createElement("img");
+    img.src = path;
+    return img;
+}

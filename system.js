@@ -11,32 +11,45 @@ const HEIGHT = MAP_HEIGHT * FIELD_SIZE;
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 
+const blocksImage = loadImage("blocks.png");
+const IMAGE_SIZE = 8;
+
 class BlockType {
-    constructor(coordinates, color) {
+    constructor(coordinates, index) {
         this.coordinates = coordinates;
-        this.color = color;
+        this.index = index;
     }
 }
-
 
 class Block {
     constructor(blockType) {
         this.blockType = blockType;
     }
     render(x, y) {
-        
+        for(const coord of this.blockType.coordinates) {
+            console.log(coord);
+        }
     }
 }
 
+const _COLOR_RED = 0;
+const _COLOR_GRAY = 1;
+const _COLOR_AQUA = 2;
+const _COLOR_YELLOW = 3;
+
+const _COLOR_MAGENTA = 4;
+const _COLOR_BLUE = 5;
+const _COLOR_GREEN = 6;
+
 const blockTypes = [
-    new BlockType([[0,0],[0,1],[0,2],[0,3]], "red"),
-    new BlockType([[0,0],[1,0],[0,1],[1,1]], "aqua"),
-    new BlockType([[0,0],[0,1],[0,2],[1,2]], "yellow"),
-    new BlockType([[0,0],[1,0],[2,0],[1,1]], "gray"),
+    new BlockType([[0,0],[0,1],[0,2],[0,3]], _COLOR_RED),
+    new BlockType([[0,0],[1,0],[0,1],[1,1]], _COLOR_GRAY),
+    new BlockType([[0,0],[0,1],[0,2],[1,2]], _COLOR_AQUA),
+    new BlockType([[0,0],[1,0],[2,0],[1,1]], _COLOR_YELLOW),
     
-    new BlockType([[1,0],[1,1],[1,2],[0,2]], "magenta"),
-    new BlockType([[1,0],[2,0],[0,1],[1,1]], "blue"),
-    new BlockType([[0,0],[1,0],[1,1],[2,1]], "lime")
+    new BlockType([[1,0],[1,1],[1,2],[0,2]], _COLOR_MAGENTA),
+    new BlockType([[1,0],[2,0],[0,1],[1,1]], _COLOR_BLUE),
+    new BlockType([[0,0],[1,0],[1,1],[2,1]], _COLOR_GREEN)
 ];
 const block = new Block(blockTypes[0]);
 
@@ -49,8 +62,8 @@ function init() {
             fields.push({x, y, type: __EMPTY});
         }
     }
-    fields[21].type = 0;
-    fields[22].type = 1;
+    //fields[21].type = _COLOR_RED;
+    //fields[22].type = _COLOR_AQUA;
 
     randomBlock();
     render();
@@ -68,8 +81,8 @@ function render() {
     renderLines();
     renderCircles();
 
-    renderField(fields[21]);
-    renderField(fields[22]);
+    //renderField(fields[21]);
+    //renderField(fields[22]);
 }
 
 function renderLines() {
@@ -93,6 +106,11 @@ function renderBlock(block) {
 }
 
 function renderField(field) {
+    const fieldX = field.x * FIELD_SIZE;
+    const fieldY = field.y * FIELD_SIZE;
+
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(blocksImage, field.type * IMAGE_SIZE, 0, IMAGE_SIZE, IMAGE_SIZE, fieldX, fieldY, FIELD_SIZE, FIELD_SIZE);
 }
 
 function getRand(min, max) {
