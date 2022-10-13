@@ -11,7 +11,7 @@ function renderLines() {
         drawLine(0, y * FIELD_SIZE, WIDTH, y * FIELD_SIZE, COLOR_LINES);
 }
 
-const CIRCLE_RADIUS = 3;
+const CIRCLE_RADIUS = 2;
 function renderCircles() {
     for(var x = 0; x < MAP_WIDTH + 1; x++) {
         for(var y = 0; y < MAP_HEIGHT + 1; y++) {
@@ -46,6 +46,15 @@ function drawCircle(xCenter, yCenter, radius, color) {
 
     ctx.arc(xCenter + POS_CORRECT, yCenter + POS_CORRECT, radius, 0, Math.PI * 2);
     ctx.fill();
+    ctx.closePath();
+}
+
+function drawRect(x, y, width, height, color) {
+    ctx.strokeStyle = color;
+    ctx.beginPath();
+
+    ctx.rect(x + POS_CORRECT, y + POS_CORRECT, width, height);
+    ctx.stroke();
     ctx.closePath();
 }
 

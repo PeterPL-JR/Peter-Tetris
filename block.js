@@ -7,6 +7,17 @@ const _COLOR_MAGENTA = 4;
 const _COLOR_BLUE = 5;
 const _COLOR_GREEN = 6;
 
+const colors = [];
+
+colors[_COLOR_RED] = "red";
+colors[_COLOR_GRAY] = "gray";
+colors[_COLOR_AQUA] = "aqua";
+colors[_COLOR_YELLOW] = "yellow";
+
+colors[_COLOR_MAGENTA] = "magenta";
+colors[_COLOR_BLUE] = "royalblue";
+colors[_COLOR_GREEN] = "green";
+
 class BlockType {
     constructor(coordinates, index) {
         this.coordinates = coordinates;
@@ -61,7 +72,7 @@ class Block {
         }
     }
     initInterval() {
-        const BLOCK_FALLING_SPEED = 800;
+        const BLOCK_FALLING_SPEED = 700;
         const fall = this.fall.bind(this);
 
         this.interval = setInterval(function() {
@@ -82,7 +93,11 @@ class Block {
         }
     }
     move(xMove, yMove) {
-        this.x += xMove;
+        const newX = this.x + xMove;
+
+        if(newX >= 0 && newX + this.width <= MAP_WIDTH) {
+            this.x = newX;
+        }
         this.y += yMove;
     }
     fall() {
