@@ -44,9 +44,14 @@ function render() {
     renderLines();
     renderCircles();
 
-    renderBlockOutline();
+    renderStaticFields();
+    renderBlockOutline(block);
+    
     if(block != null) {
         block.render();
+    }
+    if(block.destroyed) {
+        randomBlock();
     }
 }
 
@@ -59,23 +64,18 @@ function randomBlock() {
     block = new Block(randomType);
 }
 
+function renderStaticFields() {
+    for(var field of fields) {
+        if(field.type != __EMPTY) {
+            renderField(field.x, field.y, field.type);
+        }
+    }
+}
+
 const LEFT = -1;
 const RIGHT = 1;
 
 const FALLING_SPEED = 1;
-
-function renderBlockOutline() {
-    for(var x = 0; x < block.width; x++) {
-        for(var y = 0; y < block.height; y++) {
-
-            if(block.fields[x][y] != __EMPTY) {
-                const renderX = (x + block.x) * FIELD_SIZE;
-                const renderY = (y + MAP_HEIGHT - block.height) * FIELD_SIZE;
-                drawRect(renderX + 1, renderY + 1, FIELD_SIZE - 2, FIELD_SIZE - 2, colors[block.blockType.index]);
-            }
-        }
-    }
-}
 
 function initKeyboard() {
     document.onkeydown = function(event) {

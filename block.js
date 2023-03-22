@@ -40,6 +40,7 @@ class Block {
     constructor(blockType) {
         this.blockType = blockType;
         this.fields = [];
+        this.destroyed = false;
 
         this.init();
         this.initInterval();
@@ -94,11 +95,14 @@ class Block {
     }
     move(xMove, yMove) {
         const newX = this.x + xMove;
+        const newY = this.y + yMove;
 
-        if(newX >= 0 && newX + this.width <= MAP_WIDTH) {
-            this.x = newX;
+        if(newX >= 0 && newX + this.width <= MAP_WIDTH) this.x = newX;
+        this.y = newY;
+
+        if(this.y + this.height >= MAP_HEIGHT) {
+            this.put();
         }
-        this.y += yMove;
     }
     fall() {
         this.move(0, FALLING_SPEED);
@@ -119,6 +123,36 @@ class Block {
         this.height = buffer;
     }
     put() {
+        for(var x = 0; x < this.width; x++) {
+            for(var y = 0; y < this.height; y++) {
+                const putX = x + this.x;
+                const putY = y + this.y;
 
+                const field = fields.find(function(field) {
+                    return field.x == putX && field.y == putY;
+                });
+                if(this.fields[x][y] != __EMPTY) {
+                    field.type = this.blockType.index;
+                }
+            }
+        }
+        this.destroy();
+    }
+    destroy() {
+        this.destroyed = true;
+        clearInterval(this.interval);
+    }
+}
+
+function renderBlockOutline(block) {
+    for(var x = 0; x < block.width; x++) {
+        for(var y = 0; y < block.height; y++) {
+
+            if(block.fields[x][y] != __EMPTY) {
+                const renderX = (x + block.x) * FIELD_SIZE;
+                const renderY = (y + MAP_HEIGHT - block.height) * FIELD_SIZE;
+                drawRect(renderX + 1, renderY + 1, FIELD_SIZE - 2, FIELD_SIZE - 2, colors[block.blockType.index]);
+            }
+        }
     }
 }
