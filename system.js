@@ -15,6 +15,7 @@ const ctx = canvas.getContext("2d");
 
 const blocksImage = loadImage("blocks.png");
 const IMAGE_SIZE = 8;
+const FALLING_SPEED = 1;
 
 const _X = 0;
 const _Y = 1;
@@ -33,11 +34,15 @@ function init() {
     initKeyboard();
 
     randomBlock();
+    update();
+}
+
+function update() {
+    requestAnimationFrame(update);
     render();
 }
 
 function render() {
-    requestAnimationFrame(render);
     ctx.fillStyle = COLOR_BACKGROUND;
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
@@ -45,18 +50,11 @@ function render() {
     renderCircles();
 
     renderStaticFields();
-    renderBlockOutline(block);
+    tryRenderBlockOutline(block);
     
     if(block != null) {
         block.render();
     }
-    if(block.destroyed) {
-        randomBlock();
-    }
-}
-
-function getRand(min, max) {
-    return Math.floor(Math.random() * (max -min + 1)) + min;
 }
 
 function randomBlock() {
@@ -72,18 +70,21 @@ function renderStaticFields() {
     }
 }
 
-const LEFT = -1;
-const RIGHT = 1;
-
-const FALLING_SPEED = 1;
-
 function initKeyboard() {
+
     document.onkeydown = function(event) {
         const key = event.key.toUpperCase();
+        if(block == null) return;
+
         if(key == "S") block.move(0, FALLING_SPEED);
         if(key == "A") block.move(LEFT, 0);
         if(key == "D") block.move(RIGHT, 0);
 
         if(key == "ARROWUP") block.rotate(LEFT);
     }
+}
+
+function putBlock() {
+    block = null;
+    randomBlock();
 }
