@@ -21,6 +21,7 @@ const _X = 0;
 const _Y = 1;
 
 var block = null;
+let gameEnd = false;
 
 function init() {
     canvas.width = WIDTH + 1;
@@ -50,7 +51,10 @@ function render() {
     renderCircles();
 
     renderStaticFields();
-    tryRenderBlockOutline(block);
+    
+    if(!gameEnd) {
+        tryRenderBlockOutline(block);
+    }
     
     if(block != null) {
         block.render();
@@ -84,7 +88,65 @@ function initKeyboard() {
     }
 }
 
+const TIME_CHECK_POINTS = 500;
+
 function putBlock() {
     block = null;
+    if(!gameEnd) {
+        setTimeout(checkPoints, TIME_CHECK_POINTS);
+    }
+}
+
+function checkPoints() {
+    let levelsToFall = [];
+    for(let y = 0; y < MAP_HEIGHT; y++) {
+        if(checkPoint(y)) {
+            levelsToFall.push(y);
+        }
+    }
+    
+    if(levelsToFall.length != 0) {
+        setTimeout(function() {
+            for(let level of levelsToFall) {
+                getPoint(level);
+            }
+            randomBlock();
+        }, TIME_CHECK_POINTS * 2);
+        return;
+    }
     randomBlock();
+}
+function checkPoint(yPos) {
+    let filled = 0;
+    for(let x = 0; x < MAP_WIDTH; x++) {
+        if(getField(x, yPos).type != __EMPTY) {
+            filled++;
+        }
+    }
+
+    let pointsScored = 0;
+
+    if(filled == MAP_WIDTH) {
+        pointsScored++;
+        setTimeout(function() {
+            for(let x = 0; x < MAP_WIDTH; x++) {
+                getField(x, yPos).type = __EMPTY;
+            }
+        }, TIME_CHECK_POINTS);
+        return true;
+    }
+    return false;
+}
+
+function getPoint(yPos) {
+    for(let y = yPos; y >= 1; y--) {
+        for(let x = 0; x < MAP_WIDTH; x++) {
+            getField(x, y).type = getField(x, y - 1).type;
+        }
+    }
+}
+
+function gameOver() {
+    block = null;
+    gameEnd = true;
 }

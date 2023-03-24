@@ -44,6 +44,10 @@ class Block {
         this.destroyed = false;
 
         this.init();
+        if(this.isCollision(this.x, this.y)) {
+            gameOver();
+            return;
+        }
         this.initInterval();
     }
     init() {
@@ -103,7 +107,7 @@ class Block {
         }
 
         if(newX >= 0 && newX + this.width <= MAP_WIDTH) this.x = newX;
-        this.y = newY;
+        if(newY + this.height <= MAP_HEIGHT) this.y = newY;
     }
     fall() {
         this.move(0, FALLING_SPEED);
@@ -219,4 +223,11 @@ function checkPosition(block) {
 function correctPosition(block, xOffset, yOffset) {
     block.x += xOffset;
     block.y += yOffset;
+}
+
+class SquareAnim {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+    }
 }
