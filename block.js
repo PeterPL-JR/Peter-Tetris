@@ -105,9 +105,7 @@ class Block {
         if(this.isCollision(newX, newY) || this.isFallen()) {
             this.put();
         }
-
-        if(newX >= 0 && newX + this.width <= MAP_WIDTH) this.x = newX;
-        if(newY + this.height <= MAP_HEIGHT) this.y = newY;
+        this.setPosition(newX, newY);
     }
     fall() {
         this.move(0, FALLING_SPEED);
@@ -139,7 +137,7 @@ class Block {
             this.height = oldHeight;
         }
     }
-    put() {
+    put(timeout=true) {
         for(var x = 0; x < this.width; x++) {
             for(var y = 0; y < this.height; y++) {
                 const putX = x + this.x;
@@ -154,7 +152,7 @@ class Block {
             }
         }
         this.destroy();
-        putBlock();
+        putBlock(timeout);
     }
     destroy() {
         this.destroyed = true;
@@ -162,6 +160,11 @@ class Block {
     }
     isFallen() {
         return this.y + this.height >= MAP_HEIGHT;
+    }
+
+    setPosition(x, y) {
+        if(x >= 0 && x + this.width <= MAP_WIDTH) this.x = x;
+        if(y + this.height <= MAP_HEIGHT) this.y = y;
     }
 
     isCollision(xPos, yPos) {
@@ -180,26 +183,9 @@ class Block {
     }
 }
 
-function tryRenderBlockOutline(block) {
+function renderBlockOutline(block) {
     if(block == null) return;
-    
-    for(let y = 0; y < MAP_HEIGHT - block.height + 1; y++) {
-        if(block.isCollision(block.x, y)) {
-            let yOffset = y + 1;
-            if(block.height > block.width) yOffset += 1;
-
-            if(block.width == 1) yOffset += 1;
-            if(block.height == 1) yOffset -= 1;
-            
-            renderBlockOutline(block, yOffset);
-            return;
-        }
-    }
-
-    renderBlockOutline(block, MAP_HEIGHT);
-}
-function renderBlockOutline(block, yOffset) {
-    if(block == null) return;
+    let yOffset = getBlockOutlineOffset(block);
 
     for(var x = 0; x < block.width; x++) {
         for(var y = 0; y < block.height; y++) {
@@ -211,6 +197,20 @@ function renderBlockOutline(block, yOffset) {
             }
         }
     }
+}
+function getBlockOutlineOffset(block) {
+    for(let y = 0; y < MAP_HEIGHT - block.height + 1; y++) {
+        if(block.isCollision(block.x, y)) {
+            let yOffset = y + 1;
+            if(block.height > block.width) yOffset += 1;
+
+            if(block.width == 1) yOffset += 1;
+            if(block.height == 1) yOffset -= 1;
+
+            return yOffset;
+        }
+    }
+    return MAP_HEIGHT;
 }
 
 function checkPosition(block) {

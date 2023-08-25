@@ -53,7 +53,7 @@ function render() {
     renderStaticFields();
     
     if(!gameEnd) {
-        tryRenderBlockOutline(block);
+        renderBlockOutline(block);
     }
     
     if(block != null) {
@@ -80,21 +80,32 @@ function initKeyboard() {
         const key = event.key.toUpperCase();
         if(block == null) return;
 
-        if(key == "S") block.move(0, FALLING_SPEED);
-        if(key == "A") block.move(LEFT, 0);
-        if(key == "D") block.move(RIGHT, 0);
+        if(key == "S" || key == "ARROWDOWN") block.move(0, FALLING_SPEED);
+        if(key == "A" || key == "ARROWLEFT") block.move(LEFT, 0);
+        if(key == "D" || key == "ARROWRIGHT") block.move(RIGHT, 0);
 
-        if(key == "ARROWUP") block.rotate(LEFT);
+        if(key == "W" || key == "ARROWUP") block.rotate();
+        if(key == " ") autoPut();
     }
 }
 
 const TIME_CHECK_POINTS = 500;
 
-function putBlock() {
+function putBlock(timeout) {
     block = null;
     if(!gameEnd) {
-        setTimeout(checkPoints, TIME_CHECK_POINTS);
+        if(timeout) setTimeout(checkPoints, TIME_CHECK_POINTS);
+        else checkPoints();
     }
+}
+function autoPut() {
+    let yOffset = getBlockOutlineOffset(block);
+    
+    let x = block.x;
+    let y = yOffset - block.height;
+
+    block.setPosition(x, y);
+    block.put(false);
 }
 
 function checkPoints() {
