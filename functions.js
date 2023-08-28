@@ -1,6 +1,10 @@
 const LEFT = -1;
 const RIGHT = 1;
 
+const MOVING_LEFT = 0;
+const MOVING_RIGHT = 1;
+const FALLING = 2;
+
 function getField(x, y) {
     let field = fields.find(function(field) {
         return field.x == x && field.y == y;

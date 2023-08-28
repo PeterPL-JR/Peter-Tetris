@@ -23,6 +23,9 @@ const _Y = 1;
 var block = null;
 let gameEnd = false;
 
+let moving = false;
+let movingTime = 0;
+
 function init() {
     canvas.width = WIDTH + 1;
     canvas.height = HEIGHT + 1;
@@ -40,7 +43,21 @@ function init() {
 
 function update() {
     requestAnimationFrame(update);
+    updateMoving();
+
     render();
+}
+function updateMoving() {
+    if(gameEnd || !block) return;
+
+    if(moving !== false) {
+        movingTime++;
+    }
+    if(movingTime % 4 == 0) {
+        if(moving === MOVING_LEFT) block.move(LEFT, 0);
+        if(moving === MOVING_RIGHT) block.move(RIGHT, 0);
+        if(moving === FALLING) block.move(0, FALLING_SPEED);
+    }
 }
 
 function render() {
@@ -63,7 +80,13 @@ function render() {
 
 function randomBlock() {
     const randomType = blockTypes[getRand(0, blockTypes.length - 1)];
-    block = new Block(randomType);
+    let newBlock = new Block(randomType);
+    block = newBlock;
+    
+    if(newBlock.isCollision(newBlock.x, newBlock.y)) {
+        block.put(false);
+        gameOver();
+    }
 }
 
 function renderStaticFields() {
@@ -75,18 +98,27 @@ function renderStaticFields() {
 }
 
 function initKeyboard() {
-
     document.onkeydown = function(event) {
-        const key = event.key.toUpperCase();
-        if(block == null) return;
-
-        if(key == "S" || key == "ARROWDOWN") block.move(0, FALLING_SPEED);
-        if(key == "A" || key == "ARROWLEFT") block.move(LEFT, 0);
-        if(key == "D" || key == "ARROWRIGHT") block.move(RIGHT, 0);
-
-        if(key == "W" || key == "ARROWUP") block.rotate();
-        if(key == " ") autoPut();
+        let key = event.key.toUpperCase();
+        keyDown(key);
     }
+    document.onkeyup = function() {
+        keyUp();
+    }
+}
+function keyDown(key) {
+    if(gameEnd || !block) return;
+
+    if(key == "S" || key == "ARROWDOWN") moving = FALLING;
+    if(key == "A" || key == "ARROWLEFT") moving = MOVING_LEFT;
+    if(key == "D" || key == "ARROWRIGHT") moving = MOVING_RIGHT;
+    
+    if(key == "W" || key == "ARROWUP") block.rotate();
+    if(key == " ") autoPut();
+}
+function keyUp() {
+    moving = false;
+    movingTime = 0;
 }
 
 const TIME_CHECK_POINTS = 500;
